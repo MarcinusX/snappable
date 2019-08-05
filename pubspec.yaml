@@ -1,7 +1,7 @@
 name: snappable
 description: A Flutter library for Thanos snap effect
 version: 1.0.0
-author: Marcin Szałek <marcin@fidev.io>
+author: Marcin Szałek <marcinszalek1@gmail.com>
 homepage: https://github.com/MarcinusX/snappable
 
 environment:
