@@ -1,6 +1,6 @@
 name: snappable
 description: A Flutter library for Thanos snap effect. Use it to turn your Widgets into dust. For fun only!
-version: 1.0.0
+version: 1.0.1
 author: Marcin Szałek <marcinszalek1@gmail.com>
 homepage: https://github.com/MarcinusX/snappable
 
