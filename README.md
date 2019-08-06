@@ -2,7 +2,7 @@
 
 Thanos effect library in Flutter
 
-Check out blog post describing the package on Fidev.
+Check out [blog post](https://fidev.io/thanos) describing the package on [Fidev](https://fidev.io).
 
 ## Examples
 ![Example 1](https://user-images.githubusercontent.com/16286046/62490322-51313680-b7c9-11e9-91f2-1363c292f544.gif)
