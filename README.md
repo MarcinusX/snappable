@@ -22,7 +22,7 @@ import 'package:snappable/snappable.dart';
 @override
 Widget build(BuildContext context) {
   return Snappable(
-    child: Text('This whill be snapped'),
+    child: Text('This will be snapped'),
   );
 }
 ```
@@ -35,7 +35,7 @@ class MyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Snappable(
       key: key,
-      child: Text('This whill be snapped'),
+      child: Text('This will be snapped'),
     );
   }
   
@@ -53,7 +53,7 @@ class MyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Snappable(
       snapOntap: true,
-      child: Text('This whill be snapped'),
+      child: Text('This will be snapped'),
     );
   }
 }
