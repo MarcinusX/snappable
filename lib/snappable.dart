@@ -34,6 +34,9 @@ class Snappable extends StatefulWidget {
   /// Defaults to false
   final bool snapOnTap;
 
+  /// Function that gets called when snap ends
+  final Function onSnapped;
+
   const Snappable({
     Key key,
     @required this.child,
@@ -42,6 +45,7 @@ class Snappable extends StatefulWidget {
     this.randomDislocationOffset = const Offset(64, 32),
     this.numberOfBuckets = 16,
     this.snapOnTap = false,
+    this.onSnapped,
   }) : super(key: key);
 
   @override
@@ -78,6 +82,12 @@ class SnappableState extends State<Snappable>
       vsync: this,
       duration: widget.duration,
     );
+
+    if (widget.onSnapped != null) {
+      _animationController.addStatusListener((status) {
+        if (status == AnimationStatus.completed) widget.onSnapped();
+      });
+    }
   }
 
   @override
