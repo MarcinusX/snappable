@@ -35,7 +35,7 @@ class Snappable extends StatefulWidget {
   final bool snapOnTap;
 
   /// Function that gets called when snap ends
-  final Function onSnapped;
+  final VoidCallback onSnapped;
 
   const Snappable({
     Key key,
