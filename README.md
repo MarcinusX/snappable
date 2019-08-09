@@ -59,3 +59,17 @@ class MyWidget extends StatelessWidget {
 }
 ```
  Undo by tapping again.
+ 
+ ### Callback for when the snap ends
+ ```dart
+ 
+ class MyWidget extends StatelessWidget {
+   @override
+   Widget build(BuildContext context) {
+     return Snappable(
+       onSnapped: () => print("Snapped!"),
+       child: Text('This will be snapped'),
+     );
+   }
+ }
+ ```

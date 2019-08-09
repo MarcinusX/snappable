@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Snappable(
             key: _snappableKey,
             snapOnTap: true,
+            onSnapped: () => print("Snapped!"),
             child: Card(
               child: Container(
                 height: 300,
