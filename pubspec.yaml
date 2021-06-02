@@ -5,12 +5,12 @@ author: Marcin Szałek <marcinszalek1@gmail.com>
 homepage: https://github.com/MarcinusX/snappable
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  image: ^2.1.4
+  image: ^3.0.2
 
 dev_dependencies:
   flutter_test:
