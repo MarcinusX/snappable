@@ -35,11 +35,11 @@ class Snappable extends StatefulWidget {
   final bool snapOnTap;
 
   /// Function that gets called when snap ends
-  final VoidCallback onSnapped;
+  final VoidCallback? onSnapped;
 
   const Snappable({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
     this.offset = const Offset(64, -32),
     this.duration = const Duration(milliseconds: 5000),
     this.randomDislocationOffset = const Offset(64, 32),
@@ -61,19 +61,19 @@ class SnappableState extends State<Snappable>
   bool get isGone => _animationController.isCompleted;
 
   /// Main snap effect controller
-  AnimationController _animationController;
+  late AnimationController _animationController;
 
   /// Key to get image of a [widget.child]
   GlobalKey _globalKey = GlobalKey();
 
   /// Layers of image
-  List<Uint8List> _layers;
+  List<Uint8List>? _layers;
 
   /// Values from -1 to 1 to dislocate the layers a bit
-  List<double> _randoms;
+  late List<double> _randoms;
 
   /// Size of child widget
-  Size size;
+  Size? size;
 
   @override
   void initState() {
@@ -85,9 +85,10 @@ class SnappableState extends State<Snappable>
 
     if (widget.onSnapped != null) {
       _animationController.addStatusListener((status) {
-        if (status == AnimationStatus.completed) widget.onSnapped();
+        if (status == AnimationStatus.completed) widget.onSnapped!();
       });
     }
+    _prepareRandoms();
   }
 
   @override
@@ -102,11 +103,13 @@ class SnappableState extends State<Snappable>
       onTap: widget.snapOnTap ? () => isGone ? reset() : snap() : null,
       child: Stack(
         children: <Widget>[
-          if (_layers != null) ..._layers.map(_imageToWidget),
+          ..._generateWidgetsFromImages(),
           AnimatedBuilder(
             animation: _animationController,
-            builder: (context, child) {
-              return _animationController.isDismissed ? child : Container();
+            builder: (_, Widget? child) {
+              return _animationController.isDismissed
+                  ? child!
+                  : const SizedBox.shrink();
             },
             child: RepaintBoundary(
               key: _globalKey,
@@ -122,6 +125,7 @@ class SnappableState extends State<Snappable>
   Future<void> snap() async {
     //get image from child
     final fullImage = await _getImageFromWidget();
+    if (fullImage == null) return;
 
     //create an image for every bucket
     List<image.Image> _images = List<image.Image>.generate(
@@ -156,13 +160,8 @@ class SnappableState extends State<Snappable>
     _layers = await compute<List<image.Image>, List<Uint8List>>(
         _encodeImages, _images);
 
-    //prepare random dislocations and set state
-    setState(() {
-      _randoms = List.generate(
-        widget.numberOfBuckets,
-        (i) => (math.Random().nextDouble() - 0.5) * 2,
-      );
-    });
+    _prepareRandoms();
+    setState(() {});
 
     //give a short delay to draw images
     await Future.delayed(Duration(milliseconds: 100));
@@ -179,12 +178,19 @@ class SnappableState extends State<Snappable>
     });
   }
 
+  Iterable<Widget> _generateWidgetsFromImages() {
+    if (_layers == null) return [];
+    return _layers!.map(_imageToWidget);
+  }
+
   Widget _imageToWidget(Uint8List layer) {
     //get layer's index in the list
-    int index = _layers.indexOf(layer);
+    //This is invoked in build() and _layers aren't null here.
+    int index = _layers!.indexOf(layer);
 
     //based on index, calculate when this layer should start and end
-    double animationStart = (index / _layers.length) * _lastLayerAnimationStart;
+    double animationStart =
+        (index / _layers!.length) * _lastLayerAnimationStart;
     double animationEnd = animationStart + _singleLayerAnimationLength;
 
     //create interval animation using only part of whole animation
@@ -237,20 +243,31 @@ class SnappableState extends State<Snappable>
   }
 
   /// Gets an Image from a [child] and caches [size] for later us
-  Future<image.Image> _getImageFromWidget() async {
-    RenderRepaintBoundary boundary =
-        _globalKey.currentContext.findRenderObject();
+  Future<image.Image?> _getImageFromWidget() async {
+    RenderObject? rObj = _globalKey.currentContext?.findRenderObject();
+    RenderRepaintBoundary? boundary = rObj as RenderRepaintBoundary?;
     //cache image for later
-    size = boundary.size;
+    size = boundary?.size;
+    if (boundary == null) return null;
+
     var img = await boundary.toImage();
-    var byteData = await img.toByteData(format: ImageByteFormat.png);
-    var pngBytes = byteData.buffer.asUint8List();
+    ByteData? byteData = await img.toByteData(format: ImageByteFormat.png);
+    var pngBytes = byteData?.buffer.asUint8List();
+    if (pngBytes == null) return null;
 
     return image.decodeImage(pngBytes);
   }
 
   int _gauss(double center, double value) =>
       (1000 * math.exp(-(math.pow((value - center), 2) / 0.14))).round();
+
+  /// Prepare random dislocations and set state
+  void _prepareRandoms() {
+    _randoms = List.generate(
+      widget.numberOfBuckets,
+      (i) => (math.Random().nextDouble() - 0.5) * 2,
+    );
+  }
 }
 
 /// This is slow! Run it in separate isolate
