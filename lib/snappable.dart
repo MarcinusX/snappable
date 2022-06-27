@@ -11,34 +11,34 @@ import 'package:image/image.dart' as image;
 
 class Snappable extends StatefulWidget {
   /// Widget to be snapped
-  final Widget child;
+  final Widget? child;
 
   /// Direction and range of snap effect
   /// (Where and how far will particles go)
-  final Offset offset;
+  final Offset? offset;
 
   /// Duration of whole snap animation
-  final Duration duration;
+  final Duration? duration;
 
   /// How much can particle be randomized,
   /// For example if [offset] is (100, 100) and [randomDislocationOffset] is (10,10),
   /// Each layer can be moved to maximum between 90 and 110.
-  final Offset randomDislocationOffset;
+  final Offset? randomDislocationOffset;
 
   /// Number of layers of images,
   /// The more of them the better effect but the more heavy it is for CPU
-  final int numberOfBuckets;
+  final int? numberOfBuckets;
 
   /// Quick helper to snap widgets when touched
   /// If true wraps the widget in [GestureDetector] and starts [snap] when tapped
   /// Defaults to false
-  final bool snapOnTap;
+  final bool? snapOnTap;
 
   /// Function that gets called when snap ends
-  final VoidCallback onSnapped;
+  final VoidCallback? onSnapped;
 
   const Snappable({
-    Key key,
+    Key? key,
     @required this.child,
     this.offset = const Offset(64, -32),
     this.duration = const Duration(milliseconds: 5000),
@@ -58,22 +58,22 @@ class SnappableState extends State<Snappable>
   static const double _lastLayerAnimationStart =
       1 - _singleLayerAnimationLength;
 
-  bool get isGone => _animationController.isCompleted;
+  bool get isGone => _animationController!.isCompleted;
 
   /// Main snap effect controller
-  AnimationController _animationController;
+  AnimationController? _animationController;
 
   /// Key to get image of a [widget.child]
   GlobalKey _globalKey = GlobalKey();
 
   /// Layers of image
-  List<Uint8List> _layers;
+  List<Uint8List>? _layers;
 
   /// Values from -1 to 1 to dislocate the layers a bit
-  List<double> _randoms;
+  List<double>? _randoms;
 
   /// Size of child widget
-  Size size;
+  Size? size;
 
   @override
   void initState() {
@@ -84,29 +84,29 @@ class SnappableState extends State<Snappable>
     );
 
     if (widget.onSnapped != null) {
-      _animationController.addStatusListener((status) {
-        if (status == AnimationStatus.completed) widget.onSnapped();
+      _animationController!.addStatusListener((status) {
+        if (status == AnimationStatus.completed) widget.onSnapped!();
       });
     }
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _animationController!.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.snapOnTap ? () => isGone ? reset() : snap() : null,
+      onTap: widget.snapOnTap! ? () => isGone ? reset() : snap() : null,
       child: Stack(
         children: <Widget>[
-          if (_layers != null) ..._layers.map(_imageToWidget),
+          if (_layers != null) ..._layers!.map(_imageToWidget),
           AnimatedBuilder(
-            animation: _animationController,
+            animation: _animationController!,
             builder: (context, child) {
-              return _animationController.isDismissed ? child : Container();
+              return _animationController!.isDismissed ? child! : Container();
             },
             child: RepaintBoundary(
               key: _globalKey,
@@ -125,19 +125,19 @@ class SnappableState extends State<Snappable>
 
     //create an image for every bucket
     List<image.Image> _images = List<image.Image>.generate(
-      widget.numberOfBuckets,
-      (i) => image.Image(fullImage.width, fullImage.height),
+      widget.numberOfBuckets!,
+      (i) => image.Image(fullImage!.width, fullImage.height),
     );
 
     //for every line of pixels
-    for (int y = 0; y < fullImage.height; y++) {
+    for (int y = 0; y < fullImage!.height; y++) {
       //generate weight list of probabilities determining
       //to which bucket should given pixels go
       List<int> weights = List.generate(
-        widget.numberOfBuckets,
+        widget.numberOfBuckets!,
         (bucket) => _gauss(
           y / fullImage.height,
-          bucket / widget.numberOfBuckets,
+          bucket / widget.numberOfBuckets!,
         ),
       );
       int sumOfWeights = weights.fold(0, (sum, el) => sum + el);
@@ -159,7 +159,7 @@ class SnappableState extends State<Snappable>
     //prepare random dislocations and set state
     setState(() {
       _randoms = List.generate(
-        widget.numberOfBuckets,
+        widget.numberOfBuckets!,
         (i) => (math.Random().nextDouble() - 0.5) * 2,
       );
     });
@@ -168,28 +168,29 @@ class SnappableState extends State<Snappable>
     await Future.delayed(Duration(milliseconds: 100));
 
     //start the snap!
-    _animationController.forward();
+    _animationController!.forward();
   }
 
   /// I am... IRON MAN   ~Tony Stark
   void reset() {
     setState(() {
       _layers = null;
-      _animationController.reset();
+      _animationController!.reset();
     });
   }
 
   Widget _imageToWidget(Uint8List layer) {
     //get layer's index in the list
-    int index = _layers.indexOf(layer);
+    int index = _layers!.indexOf(layer);
 
     //based on index, calculate when this layer should start and end
-    double animationStart = (index / _layers.length) * _lastLayerAnimationStart;
+    double animationStart =
+        (index / _layers!.length) * _lastLayerAnimationStart;
     double animationEnd = animationStart + _singleLayerAnimationLength;
 
     //create interval animation using only part of whole animation
     CurvedAnimation animation = CurvedAnimation(
-      parent: _animationController,
+      parent: _animationController!,
       curve: Interval(
         animationStart,
         animationEnd,
@@ -197,18 +198,18 @@ class SnappableState extends State<Snappable>
       ),
     );
 
-    Offset randomOffset = widget.randomDislocationOffset.scale(
-      _randoms[index],
-      _randoms[index],
+    Offset randomOffset = widget.randomDislocationOffset!.scale(
+      _randoms![index],
+      _randoms![index],
     );
 
     Animation<Offset> offsetAnimation = Tween<Offset>(
       begin: Offset.zero,
-      end: widget.offset + randomOffset,
+      end: widget.offset! + randomOffset,
     ).animate(animation);
 
     return AnimatedBuilder(
-      animation: _animationController,
+      animation: _animationController!,
       child: Image.memory(layer),
       builder: (context, child) {
         return Transform.translate(
@@ -226,7 +227,7 @@ class SnappableState extends State<Snappable>
   int _pickABucket(List<int> weights, int sumOfWeights) {
     int rnd = math.Random().nextInt(sumOfWeights);
     int chosenImage = 0;
-    for (int i = 0; i < widget.numberOfBuckets; i++) {
+    for (int i = 0; i < widget.numberOfBuckets!; i++) {
       if (rnd < weights[i]) {
         chosenImage = i;
         break;
@@ -237,14 +238,14 @@ class SnappableState extends State<Snappable>
   }
 
   /// Gets an Image from a [child] and caches [size] for later us
-  Future<image.Image> _getImageFromWidget() async {
-    RenderRepaintBoundary boundary =
-        _globalKey.currentContext.findRenderObject();
+  Future<image.Image?> _getImageFromWidget() async {
+    RenderRepaintBoundary? boundary =
+        _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
     //cache image for later
-    size = boundary.size;
+    size = boundary!.size;
     var img = await boundary.toImage();
     var byteData = await img.toByteData(format: ImageByteFormat.png);
-    var pngBytes = byteData.buffer.asUint8List();
+    var pngBytes = byteData!.buffer.asUint8List();
 
     return image.decodeImage(pngBytes);
   }

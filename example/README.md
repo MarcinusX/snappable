@@ -1,53 +1,16 @@
-# snappable
+# example
 
-Check out [blog post](https://fidev.io/thanos) describing the package on [Fidev](https://fidev.io).
+A new Flutter project.
 
 ## Getting Started
 
-### Import it
-```dart
-import 'package:snappable/snappable.dart';
-```
+This project is a starting point for a Flutter application.
 
-### Wrap any widget in Snappable
-```dart
-@override
-Widget build(BuildContext context) {
-  return Snappable(
-    child: Text('This whill be snapped'),
-  );
-}
-```
-#### Snap with a Key
-```dart
+A few resources to get you started if this is your first Flutter project:
 
-class MyWidget extends StatelessWidget {
-  final key = GlobalKey<SnappableState>();
-  @override
-  Widget build(BuildContext context) {
-    return Snappable(
-      key: key,
-      child: Text('This whill be snapped'),
-    );
-  }
-  
-  void snap() {
-    key.currentState.snap();
-  }
-}
-```
-Undo by `currentState.reset()`.
-#### or snap by tap
-```dart
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-class MyWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Snappable(
-      snapOntap: true,
-      child: Text('This whill be snapped'),
-    );
-  }
-}
-```
- Undo by tapping again.
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
