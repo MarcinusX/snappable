@@ -17,19 +17,10 @@ Check out [blog post](https://fidev.io/thanos) describing the package on [Fidev]
 import 'package:snappable/snappable.dart';
 ```
 
-### Wrap any widget in Snappable
-```dart
-@override
-Widget build(BuildContext context) {
-  return Snappable(
-    child: Text('This will be snapped'),
-  );
-}
-```
 #### Snap with a Key
 ```dart
 
-lass MyHomePage extends StatefulWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
   @override
