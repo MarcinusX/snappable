@@ -17,59 +17,60 @@ Check out [blog post](https://fidev.io/thanos) describing the package on [Fidev]
 import 'package:snappable/snappable.dart';
 ```
 
-### Wrap any widget in Snappable
-```dart
-@override
-Widget build(BuildContext context) {
-  return Snappable(
-    child: Text('This will be snapped'),
-  );
-}
-```
 #### Snap with a Key
 ```dart
 
-class MyWidget extends StatelessWidget {
-  final key = GlobalKey<SnappableState>();
-  @override
-  Widget build(BuildContext context) {
-    return Snappable(
-      key: key,
-      child: Text('This will be snapped'),
-    );
-  }
-  
-  void snap() {
-    key.currentState.snap();
-  }
-}
-```
-Undo by `currentState.reset()`.
-#### or snap by tap
-```dart
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
 
-class MyWidget extends StatelessWidget {
+  @override
+  MyHomePageState createState() => MyHomePageState();
+}
+
+class MyHomePageState extends State<MyHomePage> {
+  final _snappableKey = GlobalKey<SnappableState>();
+
   @override
   Widget build(BuildContext context) {
-    return Snappable(
-      snapOntap: true,
-      child: Text('This will be snapped'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Snap'),
+      ),
+      body: Column(
+        children: <Widget>[
+          Snappable(
+            key: _snappableKey,
+            snapOnTap: true,
+            onSnapped: () => print("Snapped!"),
+            child: Card(
+              child: Container(
+                height: 300,
+                width: double.infinity,
+                color: Colors.deepPurple,
+                alignment: Alignment.center,
+                child: Text(
+                  'This will be sanpped',
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                        color: Colors.white,
+                      ),
+                ),
+              ),
+            ),
+          ),
+          RaisedButton(
+            child: const Text('Snap / Reverse'),
+            onPressed: () {
+              SnappableState state = _snappableKey.currentState!;
+              if (state.isGone) {
+                state.reset();
+              } else {
+                state.snap();
+              }
+            },
+          )
+        ],
+      ),
     );
   }
 }
-```
- Undo by tapping again.
- 
- ### Callback for when the snap ends
- ```dart
- 
- class MyWidget extends StatelessWidget {
-   @override
-   Widget build(BuildContext context) {
-     return Snappable(
-       onSnapped: () => print("Snapped!"),
-       child: Text('This will be snapped'),
-     );
-   }
- }
  ```

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:snappable/snappable.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Snap'),
+        title: const Text('Snap'),
       ),
       body: Column(
         children: <Widget>[
@@ -44,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 alignment: Alignment.center,
                 child: Text(
                   'This will be sanpped',
-                  style: Theme.of(context).textTheme.title.copyWith(
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
                         color: Colors.white,
                       ),
                 ),
@@ -52,9 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           RaisedButton(
-            child: Text('Snap / Reverse'),
+            child: const Text('Snap / Reverse'),
             onPressed: () {
-              SnappableState state = _snappableKey.currentState;
+              SnappableState state = _snappableKey.currentState!;
               if (state.isGone) {
                 state.reset();
               } else {
