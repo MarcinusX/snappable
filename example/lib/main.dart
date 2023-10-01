@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 alignment: Alignment.center,
                 child: Text(
                   'This will be snapped',
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: Colors.white,
                       ),
                 ),

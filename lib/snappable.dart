@@ -1,8 +1,7 @@
 library snappable;
 
 import 'dart:math' as math;
-import 'dart:typed_data';
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -130,7 +129,11 @@ class SnappableState extends State<Snappable>
     //create an image for every bucket
     List<image.Image> _images = List<image.Image>.generate(
       widget.numberOfBuckets,
-      (i) => image.Image(fullImage.width, fullImage.height),
+      (i) => image.Image(
+        width: fullImage.width,
+        height: fullImage.height,
+        numChannels: 4,
+      ),
     );
 
     //for every line of pixels
@@ -149,7 +152,7 @@ class SnappableState extends State<Snappable>
       //for every pixel in a line
       for (int x = 0; x < fullImage.width; x++) {
         //get the pixel from fullImage
-        int pixel = fullImage.getPixel(x, y);
+        image.Pixel pixel = fullImage.getPixel(x, y);
         //choose a bucket for a pixel
         int imageIndex = _pickABucket(weights, sumOfWeights);
         //set the pixel from chosen bucket
@@ -250,8 +253,8 @@ class SnappableState extends State<Snappable>
     size = boundary?.size;
     if (boundary == null) return null;
 
-    var img = await boundary.toImage();
-    ByteData? byteData = await img.toByteData(format: ImageByteFormat.png);
+    ui.Image img = await boundary.toImage();
+    ByteData? byteData = await img.toByteData(format: ui.ImageByteFormat.png);
     var pngBytes = byteData?.buffer.asUint8List();
     if (pngBytes == null) return null;
 
