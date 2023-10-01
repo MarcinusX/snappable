@@ -43,22 +43,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.deepPurple,
                 alignment: Alignment.center,
                 child: Text(
-                  'This will be sanpped',
-                  style: Theme.of(context).textTheme.title.copyWith(
+                  'This will be snapped',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: Colors.white,
                       ),
                 ),
               ),
             ),
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text('Snap / Reverse'),
             onPressed: () {
-              SnappableState state = _snappableKey.currentState;
-              if (state.isGone) {
-                state.reset();
-              } else {
-                state.snap();
+              SnappableState? state = _snappableKey.currentState;
+              if (state != null) {
+                if (state.isGone) {
+                  state.reset();
+                } else {
+                  state.snap();
+                }
               }
             },
           )
